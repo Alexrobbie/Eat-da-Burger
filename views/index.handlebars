@@ -1,0 +1,77 @@
+<h1 class="title">Eat-Da-Burger!</h1>
+
+<div class="uneaten">
+<h2>Uneaten Burgers!</h2>
+<ul>
+  {{#each burgers}}
+    {{#unless devoured}}
+     <p> {{this.id}}. {{this.burger_name}} <button data-burgerid="{{this.id}}" class="devourburger">Devour It</button>
+    </p>
+    {{/unless}}
+  {{/each}}
+</ul>
+</div>
+
+<div class="eaten"> 
+<h2>Eaten Burgers!</h2>
+<ul>
+  {{#each burgers}}
+    {{#if devoured}}
+       <p> {{this.id}}. {{this.burger_name}}</p>
+    {{/if}}
+  {{/each}}
+</ul>
+</div>
+
+<h2>Add a Burger</h2>
+<form class="button-size" id="createburger">
+
+  <div class="form-group">
+    <label for="bu">Burger Name:</label>
+    <input type="text" id="hamB" name="name">
+  </div>
+  <button type="submit">Add Burger</button>
+</form>
+<br>
+<img src="https://p7.hiclipart.com/preview/567/571/637/hamburger-cheeseburger-hot-dog-veggie-burger-cartoon-junk-food.jpg" alt="Burger" height="100" width="100">
+<script type="text/javascript">
+    
+        $("#createburger").on("submit", function (event) {
+        event.preventDefault();
+        console.log("click");
+        let newBurger = {
+            burger_name: $("#hamB").val().trim(),
+            devoured: 0
+        };    
+        $.ajax("/api/burgers/", {
+            type: "POST",
+            data: newBurger
+        }).then(
+            function () {
+                console.log("created new burger");
+                location.reload();
+            }
+        )
+    })
+
+    $(".devourburger").on("click", function(event){
+        event.preventDefault();
+
+        let id = $(this).data("burgerid");
+        console.log(id);
+        let eatenBurger = {
+            devoured: true
+        };
+
+        $.ajax("/api/burgers/" + id, {
+            type: "PUT",
+            data: eatenBurger
+        }).then(function () {
+            console.log("updated burger state");
+            location.reload();
+        })
+    
+    });
+    
+
+</script>
